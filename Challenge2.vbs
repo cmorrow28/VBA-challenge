@@ -1,159 +1,149 @@
-Sub stocks():
+{\rtf1\ansi\ansicpg1252\cocoartf2759
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-    For Each ws In ThisWorkbook.Worksheets
-    
-        ws.Activate
-
-    Range("I1").Value = "Ticker"
-    Range("J1").Value = "Yearly Change"
-    Range("K1").Value = "Percentage Change"
-    Range("L1").Value = "Total Stock Volume"
-    
-    Dim i As Long
-    Dim Ticker As String
-    
-    Dim StockTotal As LongLong
-        StockTotal = 0
-        
-    Dim SummaryTable As Integer
-        SummaryTable = 2
-        
-    Dim LastRow As Long
-    LastRow = Cells(Rows.Count, 1).End(xlUp).Row
-    
-    For i = 2 To LastRow
-        
-        If Cells(i + 1, 1).Value <> Cells(i, 1) Then
-        
-            Ticker = Cells(i, 1).Value
-            StockTotal = StockTotal + Cells(i, 7).Value
-            
-            Range("I" & SummaryTable).Value = Ticker
-            Range("L" & SummaryTable).Value = StockTotal
-            
-            SummaryTable = SummaryTable + 1
-            
-            StockTotal = 0
-            
-        Else
-            
-            StockTotal = StockTotal + Cells(i, 7).Value
-            
-        End If
-        
-    Next i
-    
-    
-    Dim CloseBalance As Double
-    Dim OpenBalance As Double
-    Dim YearlyChange As Double
-        YearlyChange = 0
-    
-    SummaryTable = 2
-    
-    For i = 2 To LastRow
-        
-        If Cells(i + 1, 1).Value <> Cells(i, 1) Then
-        
-            OpenBalance = Cells(i, 3).Value
-        
-            CloseBalance = Cells(i, 6).Value
-        
-            YearlyChange = CloseBalance - OpenBalance
-            
-            Range("J" & SummaryTable).Value = YearlyChange
-            
-            If YearlyChange >= 0 Then
-                Range("J" & SummaryTable).Interior.ColorIndex = 4
-            ElseIf YearlyChange < 0 Then
-                Range("J" & SummaryTable).Interior.ColorIndex = 3
-            End If
-                
-            SummaryTable = SummaryTable + 1
-            
-            YearlyChange = 0
-            
-        Else
-        
-            YearlyChange = CloseBalance - OpenBalance
-            
-        End If
-        
-    Next i
-    
-        Dim PercentChange As Double
-        PercentChange = 0
-        
-        SummaryTable = 2
-    
-    For i = 2 To LastRow
-        
-        If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
-            
-            OpenBalance = Cells(i, 3).Value
-        
-            CloseBalance = Cells(i, 6).Value
-            
-            PercentageChange = YearlyChange / OpenBalance
-            
-            Range("K" & SummaryTable).Value = PercentageChange
-            Range("K" & SummaryTable).NumberFormat = "0.00%"
-            
-            SummaryTable = SummaryTable + 1
-            
-            PercentageChange = 0
-            
-        Else
-        
-            PercentageChange = YearlyChange / OpenBalance
-            
-        End If
-        
-    Next i
-   
-   SummaryTable = 2
-   
-   Range("N2").Value = "Greatest % Increase"
-   Range("N3").Value = "Greatest % Decrease"
-   Range("N4").Value = "Greatest Total Volume"
-   
-   Range("O1").Value = "Ticker"
-   Range("P1").Value = "Value"
-   
-   Dim MaxValue As Double
-   Dim MinValue As Double
-   Dim MaxVolume As LongLong
-   
-   MaxValue = Application.WorksheetFunction.Max(Range("K:K"))
-   MinValue = Application.WorksheetFunction.Min(Range("K:K"))
-   MaxVolume = Application.WorksheetFunction.Max(Range("L:L"))
-   
-   For i = 2 To LastRow
-   
-        If Cells(i, 11).Value = MaxValue Then
-        
-            Cells(2, 15).Value = Cells(i, 9).Value
-            Cells(2, 16).Value = MaxValue
-            
-        ElseIf Cells(i, 11).Value = MinValue Then
-            
-            Cells(3, 15).Value = Cells(i, 9).Value
-            Cells(3, 16).Value = MinValue
-        
-        ElseIf Cells(i, 12).Value = MaxVolume Then
-            
-            Cells(4, 15).Value = Cells(i, 9).Value
-            Cells(4, 16).Value = MaxVolume
-            
-        End If
-    
-    Next i
-   
-   Range("P2:P3").NumberFormat = "0.00%"
-   
-   ws.Columns("I:P").AutoFit
-   
-   Next ws
-    
-End Sub
-
+\f0\fs24 \cf0 Sub Tickers()\
+\
+For Each ws In Worksheets\
+\
+    'Set all Dimensions and Parameters for first part of challenge\
+    Dim Total_Vol As LongLong\
+    Dim RowCount As LongLong\
+    Dim i, r As Long\
+    Dim LastRow As LongLong\
+    Dim Yearly_Change As Double\
+    Dim OpenPerc As Double\
+    Dim ClosingPerc As Double\
+    \
+    'Add Titles for Ticker Symbol, Yearly Change, Percentage Change and Total Volume\
+    ws.Range("I1").Value = "Ticker Symbol"\
+    ws.Range("J1").Value = "Yearly Change"\
+    ws.Range("K1").Value = "Percentage Change"\
+    ws.Range("L1").Value = "Total Volume"\
+    ws.Range("I1:P1").Font.Bold = True\
+    \
+    'Find last filled row in first column\
+    LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row\
+    \
+    'Set RowCount Variable\
+    RowCount = 2\
+    \
+    'Setting a second rowc ounter to 2\
+    r = 2\
+    \
+    'Create a loop for the rows\
+    For i = 2 To LastRow\
+\
+        'Define variables for OpenPerc & ClosingPerc\
+        OpenPerc = ws.Cells(r, 3).Value\
+        ClosingPerc = ws.Cells(i, 6).Value\
+        \
+        'Add Total volume per ticker in the loop\
+        Total_Vol = Total_Vol + ws.Cells(i, 7).Value\
+        \
+        'Check each row in column 1 and check if row after has the same value\
+        If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then\
+        \
+            'If not, add Ticker Symbol to I column\
+            ws.Cells(RowCount, 9).Value = ws.Cells(i, 1).Value\
+            \
+            'Calculate Yearly Change by the equation closing percentave minus open percentage\
+            ws.Cells(RowCount, 10).Value = ClosingPerc - OpenPerc\
+            Yearly_Change = ws.Cells(RowCount, 10).Value\
+            \
+            'Calculate percentage change by yearly change divided by open percentage\
+            ws.Cells(RowCount, 11).Value = Yearly_Change / OpenPerc\
+            \
+            'Format K column to Percentage\
+            ws.Cells(RowCount, 11).NumberFormat = "0.00%"\
+            \
+            'Set conditional formatting Yearly Change\
+            If ws.Cells(RowCount, 10).Value < 0 Then\
+            \
+                'Set values that are less than 0 to red\
+                ws.Cells(RowCount, 10).Interior.ColorIndex = 3\
+            Else\
+                'Set values that are greater than 0 to green\
+                ws.Cells(RowCount, 10).Interior.ColorIndex = 4\
+            End If\
+            \
+            'Print Total Volume into column 12 in Row as per RowCoutn\
+            ws.Cells(RowCount, 12).Value = Total_Vol\
+\
+            'Reset Total_Vol to 0\
+            Total_Vol = 0\
+            \
+            'Increase RowCount by 1\
+            RowCount = RowCount + 1\
+            \
+            'Start new row from the new ticker range\
+            r = i + 1\
+            \
+         End If\
+    Next i\
+\
+    'Set Dimensions for "bonus" section\
+    Dim MaxValue As Double\
+    Dim MaxTicker As String\
+    Dim MinValue As Double\
+    Dim MinTicker As String\
+    Dim MaxTotal As LongLong\
+    Dim MaxTotalTicker As String\
+    Dim LastLast As Long\
+    \
+    'Set New headings for "Bonus" section\
+    ws.Range("O1").Value = "Ticker"\
+    ws.Range("P1").Value = "Value"\
+    ws.Range("N2").Value = "Greatest % Increase"\
+    ws.Range("N3").Value = "Greatest % Decrease"\
+    ws.Range("N4").Value = "Greatest Total Volume"\
+    ws.Range("N2:N4").Font.Bold = True\
+    \
+    'Set new counter for LastRow for new second table\
+    LastLast = ws.Cells(Rows.Count, 11).End(xlUp).Row\
+    \
+    'Find the maximum and minimum values\
+    MaxValue = Application.WorksheetFunction.Max(ws.Range("K2:K" & LastLast))\
+    MinValue = Application.WorksheetFunction.Min(ws.Range("K2:K" & LastLast))\
+    MaxTotal = Application.WorksheetFunction.Max(ws.Range("L2:L" & LastLast))\
+\
+    'Create a loop to find the Ticker names\
+    For i = 2 To LastLast\
+        If ws.Cells(i, 11).Value = MaxValue Then\
+                MaxTicker = ws.Cells(i, 9).Value\
+\
+        ElseIf ws.Cells(i, 11).Value = MinValue Then\
+                MinTicker = ws.Cells(i, 9).Value\
+\
+        ElseIf ws.Cells(i, 12).Value = MaxTotal Then\
+                MaxTotalTicker = ws.Cells(i, 9).Value\
+\
+        End If\
+\
+    Next i\
+\
+        ' Write for Greates percentage increase in percentage format\
+        ws.Range("O2").Value = MaxTicker\
+        ws.Range("P2").Value = MaxValue\
+        ws.Range("P2").NumberFormat = "0.00%"\
+        \
+        ' Write the results for greatest percentage decrease in percentave format\
+        ws.Range("O3").Value = MinTicker\
+        ws.Range("P3").Value = MinValue\
+        ws.Range("P3").NumberFormat = "0.00%"\
+        \
+        ' Write the results for greatest total volume in scientific format\
+        ws.Range("O4").Value = MaxTotalTicker\
+        ws.Range("P4").Value = MaxTotal\
+        ws.Range("P4").NumberFormat = "##0.00E+0"\
+        \
+        ' Autofit to display data\
+        ws.Columns("A:P").AutoFit\
+               \
+    Next ws\
+    \
+    \
+End Sub}
