@@ -1,15 +1,8 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2759
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\f0\fs24 \cf0 Sub Tickers()\
+Sub Tickers()\
 \
 For Each ws In Worksheets\
 \
-    'Set all Dimensions and Parameters for first part of challenge\
+    'Set all Dimensions and Parameters for the first part of challenge\
     Dim Total_Vol As LongLong\
     Dim RowCount As LongLong\
     Dim i, r As Long\
@@ -25,13 +18,13 @@ For Each ws In Worksheets\
     ws.Range("L1").Value = "Total Volume"\
     ws.Range("I1:P1").Font.Bold = True\
     \
-    'Find last filled row in first column\
+    'Find the last filled row in first column\
     LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row\
     \
     'Set RowCount Variable\
     RowCount = 2\
     \
-    'Setting a second rowc ounter to 2\
+    'Setting a second row counter to 2\
     r = 2\
     \
     'Create a loop for the rows\
@@ -50,7 +43,7 @@ For Each ws In Worksheets\
             'If not, add Ticker Symbol to I column\
             ws.Cells(RowCount, 9).Value = ws.Cells(i, 1).Value\
             \
-            'Calculate Yearly Change by the equation closing percentave minus open percentage\
+            'Calculate Yearly Change by the equation closing percentage minus open percentage\
             ws.Cells(RowCount, 10).Value = ClosingPerc - OpenPerc\
             Yearly_Change = ws.Cells(RowCount, 10).Value\
             \
@@ -125,17 +118,17 @@ For Each ws In Worksheets\
 \
     Next i\
 \
-        ' Write for Greates percentage increase in percentage format\
+        ' Write for greatest percentage increase in percentage format\
         ws.Range("O2").Value = MaxTicker\
         ws.Range("P2").Value = MaxValue\
         ws.Range("P2").NumberFormat = "0.00%"\
         \
-        ' Write the results for greatest percentage decrease in percentave format\
+        ' Write the results for greatest percentage decrease in percentage format\
         ws.Range("O3").Value = MinTicker\
         ws.Range("P3").Value = MinValue\
         ws.Range("P3").NumberFormat = "0.00%"\
         \
-        ' Write the results for greatest total volume in scientific format\
+        ' Write the results for the greatest total volume in scientific format\
         ws.Range("O4").Value = MaxTotalTicker\
         ws.Range("P4").Value = MaxTotal\
         ws.Range("P4").NumberFormat = "##0.00E+0"\
